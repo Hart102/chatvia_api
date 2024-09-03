@@ -7,6 +7,7 @@ const userSchema = new Schema(
     email: { type: String, required: true, unique: true, match: /.+\@.+\..+/ },
     password: { type: String, required: true, minlength: 6 },
     profile_picture: { type: String, default: "" },
+    location: { type: String, default: "" },
     friends: [],
   },
   { timestamps: true }
