@@ -1,3 +1,4 @@
+require("dotenv").config();
 const Users = require("../Config/Db/modal");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -5,21 +6,21 @@ const saltRounds = 10;
 
 const UserRegisteration = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, phone, password } = req.body;
 
     const emailAlreadyExist = await Users.findOne({
-      email: email.toLowerCase(),
+      phone: phone.trim(),
     });
     if (emailAlreadyExist) {
       return res.json({
         isError: true,
-        message: "Email already exist. Please use another email.",
+        message: "Phone number already exist. Please use another phone number.",
       });
     }
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const user = new Users({
-      username,
-      email: email.toLowerCase(),
+      username: username.trim(),
+      phone: phone.trim(),
       password: hashedPassword,
     });
     await user.save();
@@ -32,37 +33,41 @@ const UserRegisteration = async (req, res) => {
     }
     res.json({ isError: true, message: "Failed to register user" });
   } catch (error) {
-    res.json({ isError: true, message: "Server error" });
+    res.json({ isError: true, message: error.message });
   }
 };
 
 const UserLogin = async (req, res) => {
   try {
     const result = await Users.findOne({
-      email: req.body.email.toLowerCase(),
+      phone: req.body.phone.trim(),
     });
 
     if (result == null) {
       return res.json({ isError: true, message: "User not found" });
     }
-    // Check password match
+
     const match = bcrypt.compareSync(req.body.password, result.password);
     if (!match) {
-      return res.json({ isError: true, message: "Invalid email or password" });
+      return res.json({
+        isError: true,
+        message: "Invalid phone number or password",
+      });
     }
-    // Generate JWT Token
+
     const token = jwt.sign(
-      { userId: result._id, email: result.email },
+      { _id: result._id, phone: result.phone },
       process.env.Access_Token,
       { expiresIn: "1w" }
     );
+
     res.json({
       isError: false,
       message: "Login successful",
       payoad: {
         token,
-        userId: result._id,
-        email: result.email,
+        _id: result._id,
+        phone: result.phone,
         username: result.username,
       },
     });
