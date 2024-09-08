@@ -57,18 +57,22 @@ const UpdateProfile = async (req, res) => {
 
 const UpdateProfilePhoto = async (req, res) => {
   try {
+    // console.log(req.file);
     const UpdateDataBase = async (photoId) => {
       const user = await Users.updateOne(
         { _id: new mongoose.Types.ObjectId(req.user._id) },
         { profile_photo_id: photoId }
       );
       if (user.modifiedCount > 0) {
-        return res.json({ isError: false, message: "Profile photo updated" });
+        return res.json({
+          isError: false,
+          message: "Profile photo updated",
+          payload: photoId,
+        });
       }
       res.json({
         isError: true,
         message: "Profile photo not updated. Please try again.",
-        payload: photoId,
       });
     };
 
