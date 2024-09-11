@@ -1,7 +1,10 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const Users = require("../Config/Db/modal");
-const { storage, AppWriteFileUploader } = require("../Config/AppWrite/index");
+const { Users } = require("../../Config/Db/modal");
+const {
+  storage,
+  AppWriteFileUploader,
+} = require("../../Config/AppWrite/index");
 
 const FetchUser = async (req, res) => {
   try {
@@ -57,7 +60,6 @@ const UpdateProfile = async (req, res) => {
 
 const UpdateProfilePhoto = async (req, res) => {
   try {
-    // console.log(req.file);
     const UpdateDataBase = async (photoId) => {
       const user = await Users.updateOne(
         { _id: new mongoose.Types.ObjectId(req.user._id) },
@@ -101,4 +103,21 @@ const UpdateProfilePhoto = async (req, res) => {
   }
 };
 
-module.exports = { FetchUser, UpdateProfile, UpdateProfilePhoto };
+const FindUser = async (req, res) => {
+  try {
+    const query = req.params.query?.toLowerCase().trim();
+
+    const searchResult = await Users.find({
+      $or: [
+        { username: { $regex: query, $options: "i" } },
+        { phone: { $regex: query, $options: "i" } },
+      ],
+    });
+
+    res.json({ isError: false, payload: searchResult });
+  } catch (error) {
+    res.json({ isError: true, message: "Server error" });
+  }
+};
+
+module.exports = { FetchUser, UpdateProfile, UpdateProfilePhoto, FindUser };

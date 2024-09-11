@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-const mongoURI = `mongodb+srv://${process.env.Database_username}:${process.env.Database_password}@cluster0.oypuo.mongodb.net/chatVia_app?retryWrites=true&w=majority`;
+const mongoURI = `mongodb+srv://${process.env.Database_username}:${process.env.Database_password}@cluster0.yxj6w.mongodb.net/chatVia_app?retryWrites=true&w=majority`;
 
 const DbConnection = async () => {
   try {
@@ -12,3 +12,4 @@ const DbConnection = async () => {
   }
 };
 module.exports = DbConnection;
+

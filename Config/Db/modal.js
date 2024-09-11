@@ -16,4 +16,16 @@ const userSchema = new Schema(
 
 const Users = mongoose.model("users", userSchema);
 
-module.exports = Users;
+
+const chatSchema = new Schema(
+  {
+    sender_id: { type: Schema.Types.ObjectId, ref: "users" },
+    receiver_id: { type: Schema.Types.ObjectId, ref: "users" },
+    message: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
+const Chats = mongoose.model("chats", chatSchema);
+
+module.exports = { Users, Chats };

@@ -1,5 +1,5 @@
 require("dotenv").config();
-const Users = require("../Config/Db/modal");
+const { Users } = require("../../Config/Db/modal");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const saltRounds = 10;
@@ -8,10 +8,10 @@ const UserRegisteration = async (req, res) => {
   try {
     const { username, phone, password } = req.body;
 
-    const emailAlreadyExist = await Users.findOne({
+    const phoneNumberAlreadyExist = await Users.findOne({
       phone: phone.trim(),
     });
-    if (emailAlreadyExist) {
+    if (phoneNumberAlreadyExist) {
       return res.json({
         isError: true,
         message: "Phone number already exist. Please use another phone number.",
