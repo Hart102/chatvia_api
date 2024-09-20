@@ -3,8 +3,8 @@ const router = express.Router();
 // const AuthMiddleware = require("../Config/AuthMiddleWare/index");
 
 // Routes
-const { FetchChats } = require("../../Controllers/Chats/index");
+// const { FetchChats } = require("../../Controllers/Chats/index");
 
-router.get("/fetch-chats/:id", FetchChats);
+// router.get("/fetch-chats/:id", FetchChats);
 
 module.exports = router;

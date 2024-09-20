@@ -63,7 +63,7 @@ const UpdateProfilePhoto = async (req, res) => {
     const UpdateDataBase = async (photoId) => {
       const user = await Users.updateOne(
         { _id: new mongoose.Types.ObjectId(req.user._id) },
-        { profile_photo_id: photoId }
+        { photo_id: photoId }
       );
       if (user.modifiedCount > 0) {
         return res.json({
@@ -78,7 +78,7 @@ const UpdateProfilePhoto = async (req, res) => {
       });
     };
 
-    const oldProfilePhoto = req.body.profile_photo_id;
+    const oldProfilePhoto = req.body.photo_id;
 
     // UPLOAD NEW FILE
     if (oldProfilePhoto?.length == 0 && req.file !== undefined) {
@@ -90,7 +90,7 @@ const UpdateProfilePhoto = async (req, res) => {
     if (oldProfilePhoto?.length > 0 && req.file !== undefined) {
       const response = await storage.deleteFile(
         process.env.Appwrite_BucketId,
-        req.body.profile_photo_id
+        req.body.photo_id
       );
 
       if (response == "") {

@@ -6,7 +6,7 @@ const userSchema = new Schema(
     username: { type: String, required: true },
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true, minlength: 6 },
-    profile_photo_id: { type: String, default: "" },
+    photo_id: { type: String, default: "" },
     location: { type: String, default: "" },
     bio: { type: String, default: "" },
     friends: [],
@@ -16,11 +16,10 @@ const userSchema = new Schema(
 
 const Users = mongoose.model("users", userSchema);
 
-
 const chatSchema = new Schema(
   {
-    sender_id: { type: Schema.Types.ObjectId, ref: "users" },
-    receiver_id: { type: Schema.Types.ObjectId, ref: "users" },
+    from_user: { type: Schema.Types.ObjectId, ref: "User" },
+    to_user: { type: Schema.Types.ObjectId, ref: "User" },
     message: { type: String, required: true },
   },
   { timestamps: true }

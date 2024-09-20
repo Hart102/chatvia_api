@@ -1,20 +1,21 @@
-const mongoose = require("mongoose");
-const { chatSchema } = require("../../Config/Db/modal");
+const DbConnection = require("./Config/Db/index");
+const { Chats, Users } = require("../../Config/Db/modal");
+const { GetLastChatWithFriend } = require("../../Utils/index");
 
-const FetchChats = async (req, res) => {
+const fetchFriends = async (socket, data) => {
   try {
-    const friendsId = req.params?.id;
+    const userId = data?.from_user;
+    if (userId) {
+      user = await Users.findOne({
+        _id: new mongoos.Types.ObjectId(userId),
+      }).select("_id photo_id username");
 
-    const chats = await chatSchema.find({
-      sender_id: new mongoose.Types.ObjectId(req.user._id),
-      receiver_id: new mongoose.Types.ObjectId(friendsId),
-    });
-
-    res.json({ isError: false, payload: chats });
+      const Friends = await GetLastChatWithFriend(userId);
+      socket.emit("fetchFriends", { isError: false, payload: Friends });
+    }
   } catch (error) {
-    console.log(error);
-    res.json({ isError: true, message: "Server error" });
+    socket.emit({ isError: true, message: "Server error" });
   }
 };
 
-module.exports = { FetchChats };
+module.export = { fetchFriends };
