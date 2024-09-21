@@ -16,7 +16,7 @@ const io = socketIo(server, {
 });
 
 app.use(express.json());
-app.use(cors({ origin: "https://chatvia-delta.vercel.app/" }));
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
