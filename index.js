@@ -130,8 +130,20 @@ io.on("connection", async (socket) => {
       socket.emit({ isError: true, message: "Server error" });
     }
   });
+});
 
-  // // Add User to_user Friends List When User Connects  (On Connect)
+app.get("/", (req, res) => {
+  res.json("Welcome to_user Chatvia Api!");
+});
+
+app.use("/api", authRoutes);
+app.use("/api/chat", ChatRoutes);
+
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+ // // Add User to_user Friends List When User Connects  (On Connect)
   // socket.on("addFriend", async (data) => {
   //   await Users.updateOne(
   //     { _id: data?.hostId },
@@ -175,15 +187,3 @@ io.on("connection", async (socket) => {
   // socket.on("disconnect", () => {
   //   console.log("User disconnected");
   // });
-});
-
-app.get("/", (req, res) => {
-  res.json("Welcome to_user Chatvia Api!");
-});
-
-app.use("/api", authRoutes);
-app.use("/api/chat", ChatRoutes);
-
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
