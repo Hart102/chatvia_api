@@ -14,6 +14,7 @@ const io = socketIo(server, {
     origin: "*",
     methods: ["GET", "POST", "PUT"],
   },
+  transports: ["websocket", "polling"],
 });
 
 app.use(express.json());
