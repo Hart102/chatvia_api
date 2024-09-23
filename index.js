@@ -11,11 +11,10 @@ const socketIo = require("socket.io");
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173/",
-    methods: ["GET", "POST", "PUT"],
+    origin: "*",
   },
   transports: ["websocket", "polling"],
-}).of("/namespace");
+});
 
 app.use(express.json());
 app.use(cors({ origin: "*" }));
