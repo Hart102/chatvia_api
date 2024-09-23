@@ -15,7 +15,7 @@ const io = socketIo(server, {
     methods: ["GET", "POST", "PUT"],
   },
   transports: ["websocket", "polling"],
-});
+}).of("/namespace");
 
 app.use(express.json());
 app.use(cors({ origin: "*" }));
