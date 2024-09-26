@@ -80,8 +80,6 @@ io.on("connection", async (socket) => {
             { from_user: friendId, to_user: userId },
           ],
         });
-        // const userSocketId = activeUsers.get(data?.from_user);
-        // console.log(userSocketId);
 
         socket.emit("fetchPreviousMessages", {
           isError: false,
@@ -120,8 +118,6 @@ io.on("connection", async (socket) => {
         }
       );
 
-      const FriendSocketId = activeUsers.get(message?.to_user);
-
       // Save chat in Database
       const savedMessage = new Chats({
         from_user: message?.from_user,
@@ -131,7 +127,7 @@ io.on("connection", async (socket) => {
       await savedMessage.save();
 
       if (savedMessage?._id) {
-        io.to(FriendSocketId).emit("message", message);
+        socket.emit("message", message);
       }
     } catch (error) {
       socket.emit({ isError: true, message: "Server error" });
