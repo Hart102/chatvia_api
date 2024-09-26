@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 
+
 const UserRegisteration = async (req, res) => {
   try {
     const { username, phone, password } = req.body;

@@ -31,7 +31,7 @@ const ChatRoutes = require("./Routes/Chats");
 
 // Connect to_user Database
 DbConnection();
-let user;
+let currentUser;
 const activeUsers = new Map();
 
 io.on("connection", async (socket) => {
@@ -56,7 +56,7 @@ io.on("connection", async (socket) => {
     try {
       const userId = data?.from_user;
       if (userId) {
-        user = await Users.findOne({
+        currentUser = await Users.findOne({
           _id: new mongoos.Types.ObjectId(userId),
         }).select("_id photo_id username");
 
@@ -80,18 +80,21 @@ io.on("connection", async (socket) => {
             { from_user: friendId, to_user: userId },
           ],
         });
-        socket.emit("fetchPreviousMessages", {
-          isError: false,
-          payload: previousMessages,
-          user,
-        });
+        const userSocketId = activeUsers.get(data?.from_user);
+        if (userSocketId) {
+          io.to(userSocketId).emit("fetchPreviousMessages", {
+            isError: false,
+            payload: previousMessages,
+            user: currentUser,
+          });
+        }
       }
     } catch (error) {
       socket.emit({ isError: true, message: "Server error" });
     }
   });
 
-  socket.on("sendMessage", async (message) => {
+  socket.on("SendMessage", async (message) => {
     try {
       await Users.updateOne(
         {
@@ -117,6 +120,8 @@ io.on("connection", async (socket) => {
         }
       );
 
+      const FriendSocketId = activeUsers.get(message?.to_user);
+
       // Save chat in Database
       const savedMessage = new Chats({
         from_user: message?.from_user,
@@ -126,7 +131,7 @@ io.on("connection", async (socket) => {
       await savedMessage.save();
 
       if (savedMessage?._id) {
-        io.emit("message", message);
+        io.to(FriendSocketId).emit("message", message);
       }
     } catch (error) {
       socket.emit({ isError: true, message: "Server error" });
