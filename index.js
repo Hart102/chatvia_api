@@ -80,14 +80,14 @@ io.on("connection", async (socket) => {
             { from_user: friendId, to_user: userId },
           ],
         });
-        const userSocketId = activeUsers.get(data?.from_user);
-        if (userSocketId) {
-          io.to(userSocketId).emit("fetchPreviousMessages", {
-            isError: false,
-            payload: previousMessages,
-            user: currentUser,
-          });
-        }
+        // const userSocketId = activeUsers.get(data?.from_user);
+        // console.log(userSocketId);
+
+        socket.emit("fetchPreviousMessages", {
+          isError: false,
+          payload: previousMessages,
+          user: currentUser,
+        });
       }
     } catch (error) {
       socket.emit({ isError: true, message: "Server error" });
