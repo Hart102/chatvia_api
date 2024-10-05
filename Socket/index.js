@@ -1,10 +1,8 @@
-// const socketIo = require("socket.io");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const { Chats, Users } = require("../Config/Db/modal");
 const { GetLastChatWithFriend } = require("../Utils/index");
 
-const activeUsers = new Map();
 let currentUser;
 
 const initSocket = (server) => {
@@ -48,7 +46,9 @@ const initSocket = (server) => {
           });
         }
       } catch (error) {
-        io.to(userId).emit({ isError: true, message: "Server error" });
+        if (userId) {
+          io.to(userId).emit({ isError: true, message: "Server error" });
+        }
       }
     });
 
@@ -111,21 +111,23 @@ const initSocket = (server) => {
       }
     });
 
-    socket.on("start-call", (data) => {
+    socket.on("Initialize-call", (data) => {
       try {
-        socket.broadcast.emit("start-call", data);
+        socket.broadcast.emit("Initialize-call", data);
       } catch (error) {
-        socket.broadcast.emit("start-call", {
+        socket.broadcast.emit("Initialize-call", {
           isError: true,
           message: "Server error",
         });
       }
     });
 
-    socket.on("call-status", (response) => {
-      console.log(response);
+    socket.on("Call-response", (response) => {
+      socket.broadcast.emit("Call-response", response);
+    });
 
-      socket.broadcast.emit("call-status", response);
+    socket.on("Share-stream", (stream) => {
+      socket.broadcast.emit("Share-stream", stream);
     });
   });
 };
