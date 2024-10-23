@@ -23,6 +23,10 @@ DbConnection();
 
 initSocket(server);
 
+app.get("/", (req, res) => {
+  res.json("Welcome to Chat via Api !")
+})
+
 app.use("/api", authRoutes);
 app.use("/api/chat", ChatRoutes);
 

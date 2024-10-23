@@ -2,6 +2,7 @@ const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const { Chats, Users } = require("../Config/Db/modal");
 const { GetLastChatWithFriend } = require("../Utils/index");
+const uuid = require("uuid")
 
 let currentUser;
 
@@ -111,25 +112,49 @@ const initSocket = (server) => {
       }
     });
 
-    socket.on("Initialize-call", (data) => {
-      try {
-        socket.broadcast.emit("Initialize-call", data);
-      } catch (error) {
-        socket.broadcast.emit("Initialize-call", {
-          isError: true,
-          message: "Server error",
-        });
+    // socket.on("Initialize-call", (data) => {
+    //   try {
+    //     socket.broadcast.emit("Initialize-call", data);
+    //   } catch (error) {
+    //     socket.broadcast.emit("Initialize-call", {
+    //       isError: true,
+    //       message: "Server error",
+    //     });
+    //   }
+    // });
+
+    // socket.on("Call-response", (response) => {
+    //   socket.broadcast.emit("Call-response", response);
+    // });
+
+    // socket.on("Share-stream", (stream) => {
+    //   socket.broadcast.emit("Share-stream", stream);
+    // });
+
+
+
+    // ===================
+    // socket.on("generate-roomURL", (data) => {
+    //   const roomURL =  `room?username=${encodeURIComponent(data?.username)}&photoId=${encodeURIComponent(data?.photoId)}&_id=${encodeURIComponent(data?.from_user)}&reciepiantId=${data?.to_user}`
+    //   socket.emit("generate-roomURL", roomURL)
+    // })
+
+     const GetQueryData = (urlData, text) => {
+      if(urlData && text){
+        const queryString = urlData.split('?')[1];
+        const params = new URLSearchParams(queryString);
+        const result = params.get(text)
+        return result
       }
-    });
+      return null
+    }
 
-    socket.on("Call-response", (response) => {
-      socket.broadcast.emit("Call-response", response);
-    });
+    socket.on("start-call", (roomURL) => socket.broadcast.emit("start-call", roomURL))
 
-    socket.on("Share-stream", (stream) => {
-      socket.broadcast.emit("Share-stream", stream);
-    });
+    socket.on("join-call", (data) => socket.broadcast.emit("join-call", data))
   });
+
+  
 };
 
 module.exports = { initSocket };
